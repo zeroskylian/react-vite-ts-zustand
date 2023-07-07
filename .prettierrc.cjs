@@ -4,6 +4,6 @@ module.exports = {
   useTabs: false,
   singleQuote: true,
   semi: true,
-  trailingComma: "none",
-  bracketSpacing: true,
+  trailingComma: 'none',
+  bracketSpacing: true
 };
