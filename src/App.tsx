@@ -1,32 +1,39 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
+interface BearState {
+  name: string;
+  count: number;
+  increaseCount: (by: number) => void;
+}
+
+export const useStore = create<BearState>()(
+  devtools((set) => {
+    return {
+      name: 'antd',
+      count: 0,
+      increaseCount: (count: number) => {
+        set((state) => {
+          return {
+            count: state.count + count
+          };
+        });
+      }
+    };
+  })
+);
 
 function App() {
-  const [count, setCount] = useState(0);
+  const store = useStore();
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        <p>{store.name}</p>
+        <button onClick={() => store.increaseCount(2)}>
+          count is {store.count}
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   );
 }
