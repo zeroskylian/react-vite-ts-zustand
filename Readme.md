@@ -3,3 +3,4 @@ Vite
 React
 Eslit
 prettier
+zustand
