@@ -2,50 +2,53 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    node: true,
+    node: true
   },
   extends: [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:import/recommended",
-    "plugin:jsx-a11y/recommended",
-    "eslint-config-prettier",
-    "plugin:react/jsx-runtime",
-    "plugin:prettier/recommended",
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:jsx-a11y/recommended',
+    'eslint-config-prettier',
+    'plugin:react/jsx-runtime',
+    'plugin:prettier/recommended'
   ],
   overrides: [],
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
+    ecmaVersion: 'latest',
+    sourceType: 'module',
     ecmaFeatures: {
-      jsx: true,
-    },
+      jsx: true
+    }
   },
   settings: {
     react: {
-      version: "detect",
+      version: 'detect'
     },
-    "import/resolver": {
+    'import/resolver': {
       node: {
-        paths: ["src"],
-        extensions: [".js", ".jsx", ".ts", ".tsx"],
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
       },
-    },
+      alias: {
+        map: [['@', './src']]
+      }
+    }
   },
-  plugins: ["react", "@typescript-eslint", "prettier"],
+  plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {
-    "prettier/prettier": [
-      "error",
+    'prettier/prettier': [
+      'error',
       {
         singleQuote: true,
-        parser: "typescript",
-        semi: true,
-      },
+        parser: 'typescript',
+        semi: true
+      }
     ],
-    quotes: [1, "single"],
-    semi: [1, "always"],
-    "no-extra-semi": 1,
-  },
+    quotes: [1, 'single'],
+    semi: [1, 'always'],
+    'no-extra-semi': 1
+  }
 };
