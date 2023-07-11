@@ -29,11 +29,16 @@ module.exports = {
     },
     'import/resolver': {
       node: {
-        paths: ['src'],
+        paths: ['src', 'src/css', 'src/store'],
         extensions: ['.js', '.jsx', '.ts', '.tsx']
       },
+      typescript: {},
       alias: {
-        map: [['@', './src']]
+        map: [
+          ['@', './src'],
+          ['@css', './src/css'],
+          ['@store', './src/store']
+        ]
       }
     }
   },
@@ -49,6 +54,8 @@ module.exports = {
     ],
     quotes: [1, 'single'],
     semi: [1, 'always'],
-    'no-extra-semi': 1
+    'no-extra-semi': 1,
+    'react/jsx-uses-react': 'error',
+    'react/jsx-uses-vars': 'error'
   }
 };

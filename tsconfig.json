@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
 
     /* Linting */
     "strict": true,
@@ -23,7 +23,10 @@
     /*路径*/
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@css/*": ["src/css/*"],
+      "@store/*": ["src/store/*"],
+      "@store": ["src/store"]
     },
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
