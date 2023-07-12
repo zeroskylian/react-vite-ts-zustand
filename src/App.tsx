@@ -21,7 +21,7 @@ function App() {
   );
 }
 
-function App1() {
+export function App1() {
   const name = 'a';
   return (
     <div>
