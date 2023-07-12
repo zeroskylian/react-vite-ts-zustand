@@ -3,8 +3,7 @@ import './App.css';
 import Header from './component/Header';
 import Footer from './component/Footer';
 import Container from './component/Container';
-import { Provider, sharedStore, useStore, Store } from './store/context';
-import { createStore } from 'zustand';
+import { Provider, sharedStore, useStore } from './store/context';
 
 function App() {
   return (
@@ -25,36 +24,7 @@ export function App1() {
   const name = 'a';
   return (
     <div>
-      <Provider
-        createStore={() =>
-          createStore<Store>((set, get) => ({
-            name: name,
-            count: 0,
-            increaseCount: (count: number) => {
-              set((state) => {
-                return {
-                  count: state.count + count
-                };
-              });
-            },
-            asyncIncreaseCount: async (count: number) => {
-              setTimeout(() => {
-                set((state) => {
-                  return {
-                    count: state.count + count
-                  };
-                });
-              }, 2000);
-            },
-            getNearFive: () => {
-              const count = get().count;
-              const value =
-                count % 5 < 3 ? count - (count % 5) : count + 5 - (count % 5);
-              set({ count: value });
-            }
-          }))
-        }
-      >
+      <Provider createStore={() => sharedStore(name)}>
         <div className="card">
           <Header />
           <Container />

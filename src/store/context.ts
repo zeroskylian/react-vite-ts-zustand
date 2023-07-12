@@ -7,9 +7,10 @@ import { Action } from './createStore';
 
 export type Store = State & Action;
 
-export const sharedStore = () =>
+export const sharedStore = (name?: string) =>
   createStore<Store>((set, get) => ({
-    ...initialState,
+    name: name ?? initialState.name,
+    count: initialState.count,
     increaseCount: (count: number) => {
       set((state) => {
         return {
