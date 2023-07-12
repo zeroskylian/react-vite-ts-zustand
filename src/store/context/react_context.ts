@@ -30,5 +30,5 @@ export const createBearStore = () =>
     }
   }));
 
-type BearStore = ReturnType<typeof createBearStore>;
+export type BearStore = ReturnType<typeof createBearStore>;
 export const BearContext = createContext<BearStore | null>(null);
