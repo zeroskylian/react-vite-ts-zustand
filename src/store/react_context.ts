@@ -1,14 +1,11 @@
 import { createStore } from 'zustand';
-import type { StoreApi } from 'zustand';
-import createContext from 'zustand/context';
+import { createContext } from 'react';
 import type { State } from './initialState';
 import { initialState } from './initialState';
 import { Action } from './createStore';
 
-export type Store = State & Action;
-
-export const sharedStore = () =>
-  createStore<Store>((set, get) => ({
+const store = () =>
+  createStore<State & Action>((set, get) => ({
     ...initialState,
     increaseCount: (count: number) => {
       set((state) => {
@@ -34,5 +31,4 @@ export const sharedStore = () =>
     }
   }));
 
-export const { Provider, useStore, useStoreApi } =
-  createContext<StoreApi<Store>>();
+export const StoreContext = createContext(store());
