@@ -1,19 +1,20 @@
-import React from 'react';
-import { useStore, useStoreApi } from '../store/context';
+import React, { useContext } from 'react';
 import { Input } from 'antd';
+import { useStore } from 'zustand';
+import { BearContext } from '@/store/context/react_context';
 
 export default function Container() {
-  const store = useStore();
-  const api = useStoreApi();
+  const context = useContext(BearContext);
+  if (!context) throw new Error('Missing BearContext.Provider in the tree');
+  const store = useStore(context);
   console.log('Container render');
-
   return (
     <>
       <Input
         type="text"
         value={store.name}
         onChange={(e) => {
-          api.setState({ name: e.currentTarget.value });
+          context.setState({ name: e.currentTarget.value });
         }}
       />
       <button
@@ -26,9 +27,9 @@ export default function Container() {
 
       <button
         onClick={() => {
-          api.setState((state) => {
+          context.setState((state) => {
             return {
-              count: state.count + 2
+              count: state.count + 1
             };
           });
         }}

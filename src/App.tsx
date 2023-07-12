@@ -1,66 +1,22 @@
-import React from 'react';
+import React, { useRef, useContext } from 'react';
+import { useStore } from 'zustand';
 import './App.css';
 import Header from './component/Header';
 import Footer from './component/Footer';
 import Container from './component/Container';
-import { Provider, sharedStore, useStore, Store } from './store/context';
-import { createStore } from 'zustand';
+import { BearContext, createBearStore } from './store/context/react_context';
 
 function App() {
+  const store = useRef(createBearStore()).current;
   return (
     <div>
-      <Provider createStore={sharedStore}>
+      <BearContext.Provider value={store}>
         <div className="card">
           <Header />
           <Container />
           <Footer />
         </div>
-      </Provider>
-      <Other />
-    </div>
-  );
-}
-
-export function App1() {
-  const name = 'a';
-  return (
-    <div>
-      <Provider
-        createStore={() =>
-          createStore<Store>((set, get) => ({
-            name: name,
-            count: 0,
-            increaseCount: (count: number) => {
-              set((state) => {
-                return {
-                  count: state.count + count
-                };
-              });
-            },
-            asyncIncreaseCount: async (count: number) => {
-              setTimeout(() => {
-                set((state) => {
-                  return {
-                    count: state.count + count
-                  };
-                });
-              }, 2000);
-            },
-            getNearFive: () => {
-              const count = get().count;
-              const value =
-                count % 5 < 3 ? count - (count % 5) : count + 5 - (count % 5);
-              set({ count: value });
-            }
-          }))
-        }
-      >
-        <div className="card">
-          <Header />
-          <Container />
-          <Footer />
-        </div>
-      </Provider>
+      </BearContext.Provider>
       <Other />
     </div>
   );
@@ -70,8 +26,10 @@ export default App;
 
 const Other: React.FC = () => {
   try {
-    const store = useStore();
-    return <div>{store.name ?? ''}</div>;
+    const store = useContext(BearContext);
+    if (!store) throw new Error('Missing BearContext.Provider in the tree');
+    const bears = useStore(store, (s) => s.name);
+    return <div>{bears ?? ''}</div>;
   } catch (error) {
     // 会报错
     return <div>error</div>;
