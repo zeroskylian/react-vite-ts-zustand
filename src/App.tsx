@@ -3,7 +3,7 @@ import { useStore } from 'zustand';
 import './App.css';
 import Header from './component/Header';
 import Footer from './component/Footer';
-import Container from './component/Container';
+import Container, { Container1 } from './component/Container';
 import { BearContext, createBearStore } from './store/context/react_context';
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
         <div className="card">
           <Header />
           <Container />
+          <Container1 />
           <Footer />
         </div>
       </BearContext.Provider>
