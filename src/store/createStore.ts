@@ -2,7 +2,7 @@ import type { State } from './initialState';
 import { initialState } from './initialState';
 import { create } from 'zustand';
 
-interface Action {
+export interface Action {
   increaseCount: (by: number) => void;
   asyncIncreaseCount: (by: number) => void;
   getNearFive: () => void;
