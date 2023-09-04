@@ -25,7 +25,6 @@ export default function Container() {
       >
         count is {store.count}
       </button>
-
       <button
         onClick={() => {
           context.setState((state) => {
