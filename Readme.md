@@ -429,6 +429,24 @@ export const Consumer1 = () => {
 
 # 6. Immer
 
+wait
+
 # 注意点
 
 1. zustand 默认做了变量的优化，只要是从 useStore 解构获得的函数，默认是引用不变的，也就是使用 zustand store 的函数本身并不会造成不必要的重复渲染。
+2. 如果一个组件引入了整个 store, 那么 store 发生风吹草动,都会引起组件的刷新, 但是只要引入了关注的部分, 其他的状态的改变不会引起组件的刷新, 这时就是使用 selector, 优化组件
+
+```tsx
+import { shallow } from 'zustand/shallow';
+const getName = (state: BearState) => {
+  return state.name;
+};
+
+export default function Header() {
+  const store = useContext(BearContext);
+  if (!store) throw new Error('Missing BearContext.Provider in the tree');
+  const name = useStore(store, getName, shallow);
+  console.log('Header render');
+  return <div>{name}</div>;
+}
+```
