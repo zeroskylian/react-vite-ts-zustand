@@ -11,3 +11,7 @@ export const getName = (state: Store) => {
 export const getFooter = (state: Store) => {
   return state.footer;
 };
+
+export const getStore = (state: Store) => {
+  return state;
+};

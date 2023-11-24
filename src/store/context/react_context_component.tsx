@@ -24,6 +24,8 @@ export function useBearContext<T>(
   return useStore(store, selector, equalityFn);
 }
 
+/*
+
 /// 举例
 export const Consumer = () => {
   const storeApi = useContext(BearContext);
@@ -53,3 +55,5 @@ export const Consumer1 = () => {
     </div>
   );
 };
+
+*/
