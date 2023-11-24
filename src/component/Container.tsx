@@ -1,45 +1,68 @@
-import React, { FC, useState, useEffect } from 'react';
-import { useStore } from '../store';
-import Input from 'antd/es/input/Input';
+import React, { useContext } from 'react';
+import { Input } from 'antd';
+import { useStore } from 'zustand';
+import { BearContext } from '@/store/context/react_context';
+import { useBearContext } from '@/store/context/react_context_component';
 
 export default function Container() {
-  const store = useStore();
+  const context = useContext(BearContext);
+  if (!context) throw new Error('Missing BearContext.Provider in the tree');
+  const store = useStore(context);
+  console.log('Container render');
   return (
     <>
       <Input
         type="text"
         value={store.name}
         onChange={(e) => {
-          useStore.setState({ name: e.currentTarget.value });
+          context.setState({ name: e.currentTarget.value });
         }}
       />
       <button
         onClick={() => {
-          store.asyncIncreaseCount(2);
+          store.increaseCount(2);
         }}
       >
         count is {store.count}
       </button>
-      <Demo />
+      <button
+        onClick={() => {
+          context.setState((state) => {
+            return {
+              count: state.count + 1
+            };
+          });
+        }}
+      >
+        count is {store.count}
+      </button>
     </>
   );
 }
 
-export const Demo: FC = () => {
-  const [state, setState] = useState(0);
-  console.log(state);
-  useEffect(() => {
-    setTimeout(
-      () =>
-        setState((old) => {
-          return old + 1;
-        }),
-      3000
-    );
-  }, []);
+export function Container1() {
+  const store = useBearContext((s) => {
+    return s;
+  });
+  console.log('Container1 render');
   return (
-    <div>
-      <button onClick={() => setState(state + 1)}>{state}</button>
-    </div>
+    <>
+      <Input type="text" value={store.name} />
+      <button
+        onClick={() => {
+          store.increaseCount(2);
+        }}
+      >
+        count is {store.count}
+      </button>
+
+      <button
+        onClick={() => {
+          store.increaseCount(1);
+        }}
+      >
+        count is {store.count}
+      </button>
+    </>
   );
-};
+}

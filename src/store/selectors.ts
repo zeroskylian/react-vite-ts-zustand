@@ -7,3 +7,11 @@ export const isOdd = (s: Store) => {
 export const getName = (state: Store) => {
   return state.name;
 };
+
+export const getFooter = (state: Store) => {
+  return state.footer;
+};
+
+export const getStore = (state: Store) => {
+  return state;
+};
