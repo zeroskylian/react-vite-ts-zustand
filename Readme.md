@@ -74,7 +74,7 @@ export const useStore = create<BearState>()(
 );
 ```
 
-```
+```TypeScript
 <button onClick={() => store.increaseCount(2)}>
     count is {store.count}
 </button>
@@ -239,7 +239,7 @@ export * from './selectors';
 
 之前我们使用的 useStore 是全局单例，也就是应用全局使用，如果你想要把应用封装为组件，这时就可以使用 Context 来隔离多个实例[[思想#Context]]
 
-## v4
+## v4 不推荐了
 
 完整代码见 [demo](https://github.com/zeroskylian/react-vite-ts-zustand/tree/context)
 
@@ -369,6 +369,63 @@ export default function Container() {
 ```
 
 ## future
+
+使用 react 的 Context:
+createStore 代码一致, 不同的是创建 Context 过程,使用 React 的 Context
+
+```ts
+export const BearContext = createContext<BearStore | null>(null);
+```
+
+使用时:
+
+```tsx
+import { BearContext, createBearStore } from './store/context/react_context';
+
+function App() {
+  const store = useRef(createBearStore()).current;
+  return (
+    <div>
+      <BearContext.Provider value={store}>{components}</BearContext.Provider>
+      <Other />
+    </div>
+  );
+}
+```
+
+子组件使用, 有两种方式: 1: 直接使用 useStore, 2 使用封装好的组件
+
+```tsx
+/// 举例 方式1
+export const Consumer = () => {
+  const storeApi = useContext(BearContext);
+  if (!storeApi) throw new Error('Missing TestContext.Provider in the tree');
+  const setKey = useStore(storeApi, (state) => state.increaseCount);
+  const key = useStore(storeApi, (state) => state.count);
+  return (
+    <div>
+      <button type="button" onClick={() => setKey(1)}>
+        Set Key
+      </button>
+      <div>Key: {key}</div>
+    </div>
+  );
+};
+
+/// 举例 方式2
+export const Consumer1 = () => {
+  const setKey = useBearContext((state) => state.increaseCount);
+  const key = useBearContext((state) => state.count);
+  return (
+    <div>
+      <button type="button" onClick={() => setKey(1)}>
+        Set Key
+      </button>
+      <div>Key: {key}</div>
+    </div>
+  );
+};
+```
 
 # 6. Immer
 
