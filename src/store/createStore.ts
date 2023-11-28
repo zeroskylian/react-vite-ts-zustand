@@ -1,7 +1,6 @@
 import type { State } from './initialState';
 import { initialState } from './initialState';
-import { create } from 'zustand';
-
+import { createWithEqualityFn } from 'zustand/traditional';
 export interface Action {
   increaseCount: (by: number) => void;
   asyncIncreaseCount: (by: number) => void;
@@ -10,7 +9,7 @@ export interface Action {
 
 export type Store = State & Action;
 
-export const useStore = create<Store>((set, get) => ({
+export const useAppStore = createWithEqualityFn<Store>((set, get) => ({
   ...initialState,
   increaseCount: (count: number) => {
     set((state) => {

@@ -1,6 +1,6 @@
 import React, { useRef, PropsWithChildren, useContext } from 'react';
 import { createBearStore, BearContext, BearStore } from './react_context';
-import { useStore } from 'zustand';
+import { useStoreWithEqualityFn } from 'zustand/traditional';
 import { Store } from '..';
 
 export const Provider = ({ children }: PropsWithChildren) => {
@@ -21,7 +21,7 @@ export function useBearContext<T>(
 ): T {
   const store = useContext(BearContext);
   if (!store) throw new Error('Missing BearContext.Provider in the tree');
-  return useStore(store, selector, equalityFn);
+  return useStoreWithEqualityFn(store, selector, equalityFn);
 }
 
 /*
