@@ -4,7 +4,7 @@ import Content from './Content';
 
 function Main() {
   return (
-    <div className="relative">
+    <div className='relative'>
       <Header />
       <Content />
     </div>

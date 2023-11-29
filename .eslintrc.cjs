@@ -10,9 +10,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:import/recommended',
     'plugin:jsx-a11y/recommended',
-    'eslint-config-prettier',
-    'plugin:react/jsx-runtime',
-    'plugin:prettier/recommended'
+    'plugin:react/jsx-runtime'
   ],
   overrides: [],
   parser: '@typescript-eslint/parser',
@@ -42,16 +40,8 @@ module.exports = {
       }
     }
   },
-  plugins: ['react', '@typescript-eslint', 'prettier'],
+  plugins: ['react', '@typescript-eslint'],
   rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        parser: 'typescript',
-        semi: true
-      }
-    ],
     quotes: [1, 'single'],
     semi: [1, 'always'],
     'no-extra-semi': 1,
