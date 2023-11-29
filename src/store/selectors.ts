@@ -15,3 +15,7 @@ export const getFooter = (state: Store) => {
 export const getStore = (state: Store) => {
   return state;
 };
+
+export const getCount = (state: Store) => {
+  return state.count;
+};

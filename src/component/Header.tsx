@@ -1,13 +1,18 @@
-import React, { useContext } from 'react';
-import { useStore } from 'zustand';
+import React from 'react';
+import { useAppStore, getName } from '@/store';
 import { shallow } from 'zustand/shallow';
-import { BearContext } from '@/store/context/react_context';
-import { getName } from '@/store';
 
-export default function Header() {
-  const store = useContext(BearContext);
-  if (!store) throw new Error('Missing BearContext.Provider in the tree');
-  const name = useStore(store, getName, shallow);
-  console.log('Header render');
-  return <div>{name}</div>;
+function Header() {
+  const name = useAppStore(getName, shallow);
+  return (
+    <div className="relative">
+      <div className="h-20 bg-slate-600 flex justify-start items-center">
+        <div className="w-20 h-12 bg-red-50 ml-2 "></div>
+        <div className="ml-2 font-medium text-sky-100">{name}</div>
+        <div className="w-20 h-12 bg-red-50 ml-auto"></div>
+      </div>
+    </div>
+  );
 }
+
+export default Header;
