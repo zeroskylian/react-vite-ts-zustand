@@ -28,6 +28,35 @@ export const appStore = createWithEqualityFn<State>((set, get) => ({
 
 # 3. 使用
 
+## 直接获取
+
+```jsx
+const name = useStore.getState().name;
+
+useStore.setState((state) => {
+  return { count: state.count + 1 };
+});
+```
+
+1. 使用 getState 这种方式获取store 的值, store 值的改变不会引起组件的改变
+2. setState 有两个参数, 第一个类似于 react 的 setState, 可以传 function 或者对象,用于修改 state, 第二个参数是一个 boolen,用于确定这次修改是修改还是替换 state
+
+```ts
+type SetStateInternal<T> = {
+  _(
+    partial:
+      | T
+      | Partial<T>
+      | {
+          _(state: T): T | Partial<T>;
+        }['_'],
+    replace?: boolean | undefined
+  ): void;
+}['_'];
+```
+
+## Hook 使用
+
 ```jsx
 import appStore from '@/store/store.ts'
 
@@ -80,10 +109,8 @@ export const useStore = create<BearState>()(
 );
 ```
 
-```TypeScript
-<button onClick={() => store.increaseCount(2)}>
-    count is {store.count}
-</button>
+```tsx
+<button onClick={() => store.increaseCount(2)}>count is {store.count}</button>
 ```
 
 ## 3.2 异步 action
@@ -135,7 +162,7 @@ export const useStore = create<BearState>()(
 );
 ```
 
-# 4. 结构组织与类型定义
+# 4. Demo 结构组织与类型定义
 
 ```
 ./store
@@ -245,23 +272,15 @@ export * from './selectors'
 
 之前我们使用的 useStore 是全局单例，也就是应用全局使用，如果你想要把应用封装为组件，这时就可以使用 Context 来隔离多个实例[[思想#Context]]
 
-## v4 不推荐了
+## 1. 创建 store
 
-完整代码见 [demo](https://github.com/zeroskylian/react-vite-ts-zustand/tree/context)
-
-1. 定义 store 类型
-   与上方例子一致
-2. createStore
-
-```TypeScript
+```ts
 import { createStore } from 'zustand';
-import type { StoreApi } from 'zustand';
-import createContext from 'zustand/context';
-import type { State } from './initialState';
-import { initialState } from './initialState';
-import { Action } from './createStore';
+import { createContext } from 'react';
+import { initialState } from '../initialState';
+import { Store } from '../createStore';
 
-export const sharedStore = () =>
+export const createBearStore = () =>
   createStore<Store>((set, get) => ({
     ...initialState,
     increaseCount: (count: number) => {
@@ -289,30 +308,37 @@ export const sharedStore = () =>
   }));
 ```
 
-3. 创建 context 并导出
-
-```TypeScript
-export const { Provider, useStore, useStoreApi } =
-  createContext<StoreApi<Store>>();
-```
-
-- Provider： 是组件
-- useStore： 用于获取数据
-- useStoreApi ：与直接使用不同的是 Provider 的 useStore 中不包含 setState 方法，需要使用 useStoreApi 用于调用 setState 方法，如果是 state 中的 action 还是可以用 `store.updateCount` 调用的
-
-4. 使用 Provider
+## 2. 定义 Context
 
 ```tsx
+type BearStore = ReturnType<typeof createBearStore>;
+export const BearContext = createContext<BearStore | null>(null);
+```
+
+## 3. 使用
+
+在根组件上
+
+```tsx
+import React, { useRef, useContext } from 'react';
+import { useStore } from 'zustand';
+import './App.css';
+import Header from './component/Header';
+import Footer from './component/Footer';
+import Container from './component/Container';
+import { BearContext, createBearStore } from './store/context/react_context';
+
 function App() {
+  const store = useRef(createBearStore()).current;
   return (
     <div>
-      <Provider createStore={sharedStore}>
-        <div className="card">
+      <BearContext.Provider value={store}>
+        <div className='card'>
           <Header />
           <Container />
           <Footer />
         </div>
-      </Provider>
+      </BearContext.Provider>
       <Other />
     </div>
   )
@@ -320,8 +346,13 @@ function App() {
 å
 const Other: React.FC = () => {
   try {
-    const store = useStore()
-    return <div>{store.ancestor ?? ''}</div>
+    const store = useContext(BearContext);
+    if (!store) throw new Error('Missing BearContext.Provider in the tree');
+    const bears = useStore(store, (s) => s.name);
+    return <div>{bears ?? ''}</div>;
+  } catch (error) {
+    // 会报错
+    return <div>error</div>;
   }
   catch (error) {
     // 会报错
@@ -330,93 +361,21 @@ const Other: React.FC = () => {
 }
 ```
 
-5. 使用 store
+其他组件上读取使用
 
 ```tsx
-import React from 'react'
-import { Input } from 'antd'
-import { useStore, useStoreApi } from '../store/context'
+import React, { useRef, PropsWithChildren, useContext } from 'react';
+import { createBearStore, BearContext, BearStore } from './react_context';
+import { useStore } from 'zustand';
 
-export default function Container() {
-  const store = useStore()
-  const api = useStoreApi()
-  console.log('Container render')
-
-  return (
-    <>
-      <Input
-        type="text"
-        value={store.name}
-        onChange={(e) => {
-          api.setState({ name: e.currentTarget.value })
-        }}
-      />
-      <button
-        onClick={() => {
-          store.increaseCount(2)
-        }}
-      >
-        count is
-        {' '}
-        {store.count}
-      </button>
-
-      <button
-        onClick={() => {
-          api.setState((state) => {
-            return {
-              count: state.count + 2
-            }
-          })
-        }}
-      >
-        count is
-        {' '}
-        {store.count}
-      </button>
-    </>
-  )
-}
-```
-
-## future
-
-使用 react 的 Context:
-createStore 代码一致, 不同的是创建 Context 过程,使用 React 的 Context
-
-```ts
-export const BearContext = createContext<BearStore | null>(null)
-```
-
-使用时:
-
-```tsx
-import { BearContext, createBearStore } from './store/context/react_context'
-
-function App() {
-  const store = useRef(createBearStore()).current
+export const Consumer = () => {
+  const storeApi = useContext(BearContext);
+  if (!storeApi) throw new Error('Missing TestContext.Provider in the tree');
+  const setKey = useStore(storeApi, (state) => state.increaseCount);
+  const key = useStore(storeApi, (state) => state.count);
   return (
     <div>
-      <BearContext.Provider value={store}>{components}</BearContext.Provider>
-      <Other />
-    </div>
-  )
-}
-```
-
-子组件使用, 有两种方式: 1: 直接使用 useStore, 2 使用封装好的组件
-
-```tsx
-/// 举例 方式1
-export function Consumer() {
-  const storeApi = useContext(BearContext)
-  if (!storeApi)
-    throw new Error('Missing TestContext.Provider in the tree')
-  const setKey = useStore(storeApi, state => state.increaseCount)
-  const key = useStore(storeApi, state => state.count)
-  return (
-    <div>
-      <button type="button" onClick={() => setKey(1)}>
+      <button type='button' onClick={() => setKey(1)}>
         Set Key
       </button>
       <div>
@@ -445,9 +404,20 @@ export function Consumer1() {
 }
 ```
 
-# 6. Immer
+### 5. 自定义 hook
 
-wait
+```tsx
+export function useBearInContext<T>(
+  selector: (state: Store) => T,
+  equalityFn?: (left: T, right: T) => boolean
+): T {
+  const store = useContext(BearContext);
+  if (!store) throw new Error('Missing BearContext.Provider in the tree');
+  return useStore(store, selector, equalityFn);
+}
+```
+
+# 6. Immer
 
 # 注意点
 
