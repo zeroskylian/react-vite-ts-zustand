@@ -1,25 +1,24 @@
 import React from 'react'
 import Input from 'antd/es/input/Input'
-import { shallow } from 'zustand/shallow'
-import { getCount, getName, useAppStore } from '@/store'
+import { appStore } from '@/store'
 
 function Content() {
-  const name = useAppStore(getName, shallow)
-  const count = useAppStore(getCount, shallow)
+  const name = appStore.getState().name
+  const count = appStore.getState().count
   return (
     <div>
       <Input
         size="small"
         value={name}
         onChange={(e) => {
-          useAppStore.setState({ name: e.target.value })
+          appStore.setState({ name: e.target.value })
         }}
       />
       <Input
         size="small"
         value={count}
         onChange={(e) => {
-          useAppStore.setState({ count: Number(e.target.value) })
+          appStore.setState({ count: Number(e.target.value) })
         }}
       />
       {count}

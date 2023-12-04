@@ -9,44 +9,50 @@ npm i zustand
 # 2. 创建 store
 
 ```TypeScript
-interface BearState {
+export interface State {
   name: string;
   count: number;
+  footer: string;
 }
 
-export const useStore = create<BearState>()(
-  (set, get) => {
-    return {
-      name: 'antd',
-      count: 0
-    };
-  }
-);
+export const initialState: State = {
+  name: 'lian',
+  count: 0,
+  footer: 'footer'
+};
+
+export const appStore = createWithEqualityFn<State>((set, get) => ({
+  ...initialState,
+}))
 ```
 
 # 3. 使用
 
 ```jsx
-import useStore from '@/store/store.ts';
+import appStore from '@/store/store.ts'
 
 export default function Container() {
-  const store = useStore();
+  const store = useStore()
   return (
-	  <Input
+    <>
+      <Input
         type="text"
         value={store.name}
         onChange={(e) => {
-          useStore.setState({ name: e.currentTarget.value });
+          useStore.setState({ name: e.currentTarget.value })
         }}
       />
       <button onClick={() =>
 	      useStore.setState((state) => {
-            return { count: state.count + 1 };
-          })
-      }>
-        count is {store.count}
+          return { count: state.count + 1 }
+        })}
+      >
+        count is
+        {' '}
+        {store.count}
       </button>
-  );
+    </>
+  )
 }
 ```
 
@@ -211,15 +217,15 @@ export const useStore = create<Store>((set, get) => ({
 ## selectors
 
 ```ts
-import type { Store } from './createStore';
+import type { Store } from './createStore'
 
-export const isOdd = (s: Store) => {
-  return s.count % 2 == 0;
-};
+export function isOdd(s: Store) {
+  return s.count % 2 === 0
+}
 
-export const getName = (state: Store) => {
-  return state.name;
-};
+export function getName(state: Store) {
+  return state.name
+}
 ```
 
 这个文件很简单，只需要导入 Store 的类型，然后逐一导出相应的 selector 即可。
@@ -229,10 +235,10 @@ export const getName = (state: Store) => {
 最后在 index. ts 中输出相应的方法和类型即可：
 
 ```ts
-export { useStore } from './createStore';
-export type { Store } from './createStore';
-export type { State } from './initialState';
-export * from './selectors';
+export { useStore } from './createStore'
+export type { Store } from './createStore'
+export type { State } from './initialState'
+export * from './selectors'
 ```
 
 # 5. 与 Context 联动
@@ -309,31 +315,32 @@ function App() {
       </Provider>
       <Other />
     </div>
-  );
+  )
 }
-
+å
 const Other: React.FC = () => {
   try {
-    const store = useStore();
-    return <div>{store.ancestor ?? ''}</div>;
-  } catch (error) {
-    // 会报错
-    return <div>error</div>;
+    const store = useStore()
+    return <div>{store.ancestor ?? ''}</div>
   }
-};
+  catch (error) {
+    // 会报错
+    return <div>error</div>
+  }
+}
 ```
 
 5. 使用 store
 
 ```tsx
-import React from 'react';
-import { useStore, useStoreApi } from '../store/context';
-import { Input } from 'antd';
+import React from 'react'
+import { Input } from 'antd'
+import { useStore, useStoreApi } from '../store/context'
 
 export default function Container() {
-  const store = useStore();
-  const api = useStoreApi();
-  console.log('Container render');
+  const store = useStore()
+  const api = useStoreApi()
+  console.log('Container render')
 
   return (
     <>
@@ -341,15 +348,17 @@ export default function Container() {
         type="text"
         value={store.name}
         onChange={(e) => {
-          api.setState({ name: e.currentTarget.value });
+          api.setState({ name: e.currentTarget.value })
         }}
       />
       <button
         onClick={() => {
-          store.increaseCount(2);
+          store.increaseCount(2)
         }}
       >
-        count is {store.count}
+        count is
+        {' '}
+        {store.count}
       </button>
 
       <button
@@ -357,14 +366,16 @@ export default function Container() {
           api.setState((state) => {
             return {
               count: state.count + 2
-            };
-          });
+            }
+          })
         }}
       >
-        count is {store.count}
+        count is
+        {' '}
+        {store.count}
       </button>
     </>
-  );
+  )
 }
 ```
 
@@ -374,22 +385,22 @@ export default function Container() {
 createStore 代码一致, 不同的是创建 Context 过程,使用 React 的 Context
 
 ```ts
-export const BearContext = createContext<BearStore | null>(null);
+export const BearContext = createContext<BearStore | null>(null)
 ```
 
 使用时:
 
 ```tsx
-import { BearContext, createBearStore } from './store/context/react_context';
+import { BearContext, createBearStore } from './store/context/react_context'
 
 function App() {
-  const store = useRef(createBearStore()).current;
+  const store = useRef(createBearStore()).current
   return (
     <div>
       <BearContext.Provider value={store}>{components}</BearContext.Provider>
       <Other />
     </div>
-  );
+  )
 }
 ```
 
@@ -397,34 +408,41 @@ function App() {
 
 ```tsx
 /// 举例 方式1
-export const Consumer = () => {
-  const storeApi = useContext(BearContext);
-  if (!storeApi) throw new Error('Missing TestContext.Provider in the tree');
-  const setKey = useStore(storeApi, (state) => state.increaseCount);
-  const key = useStore(storeApi, (state) => state.count);
+export function Consumer() {
+  const storeApi = useContext(BearContext)
+  if (!storeApi)
+    throw new Error('Missing TestContext.Provider in the tree')
+  const setKey = useStore(storeApi, state => state.increaseCount)
+  const key = useStore(storeApi, state => state.count)
   return (
     <div>
       <button type="button" onClick={() => setKey(1)}>
         Set Key
       </button>
-      <div>Key: {key}</div>
+      <div>
+        Key:
+        {key}
+      </div>
     </div>
-  );
-};
+  )
+}
 
 /// 举例 方式2
-export const Consumer1 = () => {
-  const setKey = useBearContext((state) => state.increaseCount);
-  const key = useBearContext((state) => state.count);
+export function Consumer1() {
+  const setKey = useBearContext(state => state.increaseCount)
+  const key = useBearContext(state => state.count)
   return (
     <div>
       <button type="button" onClick={() => setKey(1)}>
         Set Key
       </button>
-      <div>Key: {key}</div>
+      <div>
+        Key:
+        {key}
+      </div>
     </div>
-  );
-};
+  )
+}
 ```
 
 # 6. Immer
@@ -437,16 +455,17 @@ wait
 2. 如果一个组件引入了整个 store, 那么 store 发生风吹草动,都会引起组件的刷新, 但是只要引入了关注的部分, 其他的状态的改变不会引起组件的刷新, 这时就是使用 selector, 优化组件
 
 ```tsx
-import { shallow } from 'zustand/shallow';
-const getName = (state: BearState) => {
-  return state.name;
-};
+import { shallow } from 'zustand/shallow'
+function getName(state: BearState) {
+  return state.name
+}
 
 export default function Header() {
-  const store = useContext(BearContext);
-  if (!store) throw new Error('Missing BearContext.Provider in the tree');
-  const name = useStore(store, getName, shallow);
-  console.log('Header render');
-  return <div>{name}</div>;
+  const store = useContext(BearContext)
+  if (!store)
+    throw new Error('Missing BearContext.Provider in the tree')
+  const name = useStore(store, getName, shallow)
+  console.log('Header render')
+  return <div>{name}</div>
 }
 ```

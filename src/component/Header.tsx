@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { shallow } from 'zustand/shallow'
 import { getName, useAppStore } from '@/store'
 
 function Header() {
   const name = useAppStore(getName, shallow)
-  useEffect(() => {
-    console.log(name)
-  }, [])
   return (
     <div className="relative">
       <div className="h-20 bg-slate-600 flex justify-start items-center">

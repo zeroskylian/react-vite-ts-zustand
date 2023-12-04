@@ -1,27 +1,30 @@
-import React, { useRef, PropsWithChildren, useContext } from 'react';
-import { createBearStore, BearContext, BearStore } from './react_context';
-import { useStoreWithEqualityFn } from 'zustand/traditional';
-import { Store } from '..';
+import type { PropsWithChildren } from 'react'
+import React, { useContext, useRef } from 'react'
+import { useStoreWithEqualityFn } from 'zustand/traditional'
+import type { Store } from '..'
+import type { BearStore } from './react_context'
+import { BearContext, createBearStore } from './react_context'
 
-export const Provider = ({ children }: PropsWithChildren) => {
-  const storeRef = useRef<BearStore>();
-  if (!storeRef.current) {
-    storeRef.current = createBearStore();
-  }
+export function Provider({ children }: PropsWithChildren) {
+  const storeRef = useRef<BearStore>()
+  if (!storeRef.current)
+    storeRef.current = createBearStore()
+
   return (
     <BearContext.Provider value={storeRef.current}>
       {children}
     </BearContext.Provider>
-  );
-};
+  )
+}
 
 export function useBearContext<T>(
   selector: (state: Store) => T,
-  equalityFn?: (left: T, right: T) => boolean
+  equalityFn?: (left: T, right: T) => boolean,
 ): T {
-  const store = useContext(BearContext);
-  if (!store) throw new Error('Missing BearContext.Provider in the tree');
-  return useStoreWithEqualityFn(store, selector, equalityFn);
+  const store = useContext(BearContext)
+  if (!store)
+    throw new Error('Missing BearContext.Provider in the tree')
+  return useStoreWithEqualityFn(store, selector, equalityFn)
 }
 
 /*
