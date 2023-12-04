@@ -10,7 +10,7 @@ export interface Action {
 
 export type Store = State & Action
 
-export const appStore = createStore<Store>((set, get) => ({
+export const useStore = createStore<Store>((set, get) => ({
   ...initialState,
   increaseCount: (count: number) => {
     set((state) => {

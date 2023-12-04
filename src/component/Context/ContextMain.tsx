@@ -1,10 +1,16 @@
-import React from 'react';
-import { useBearContext } from '@/store/context/react_context_component';
-import { getName } from '@/store';
+import React from 'react'
+import Footer from '../Footer'
+import Header from './Header'
+import Container from './Container'
 
 function ContextMain() {
-  const store = useBearContext(getName);
-  return <div>ContextMain_{store}</div>;
+  return (
+    <div className="bg-orange-300 mt-20">
+      <Header />
+      <Container />
+      <Footer />
+    </div>
+  )
 }
 
-export default ContextMain;
+export default ContextMain

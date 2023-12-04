@@ -1,24 +1,24 @@
 import React from 'react'
 import Input from 'antd/es/input/Input'
-import { appStore } from '@/store'
+import { useStore } from '@/store'
 
 function Content() {
-  const name = appStore.getState().name
-  const count = appStore.getState().count
+  const name = useStore.getState().name
+  const count = useStore.getState().count
   return (
     <div>
       <Input
         size="small"
         value={name}
         onChange={(e) => {
-          appStore.setState({ name: e.target.value })
+          useStore.setState({ name: e.target.value })
         }}
       />
       <Input
         size="small"
         value={count}
         onChange={(e) => {
-          appStore.setState({ count: Number(e.target.value) })
+          useStore.setState({ count: Number(e.target.value) })
         }}
       />
       {count}
