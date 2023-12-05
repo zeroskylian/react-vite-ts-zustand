@@ -1,4 +1,4 @@
-import { createStore } from 'zustand'
+import { create } from 'zustand'
 import type { State } from './initialState'
 import { initialState } from './initialState'
 
@@ -10,7 +10,7 @@ export interface Action {
 
 export type Store = State & Action
 
-export const useStore = createStore<Store>((set, get) => ({
+export const useStore = create<Store>((set, get) => ({
   ...initialState,
   increaseCount: (count: number) => {
     set((state) => {

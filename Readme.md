@@ -31,11 +31,11 @@ export const appStore = createWithEqualityFn<State>((set, get) => ({
 ## 直接获取
 
 ```jsx
-const name = useStore.getState().name;
+const name = useStore.getState().name
 
 useStore.setState((state) => {
-  return { count: state.count + 1 };
-});
+  return { count: state.count + 1 }
+})
 ```
 
 1. 使用 getState 这种方式获取store 的值, store 值的改变不会引起组件的改变
@@ -48,11 +48,11 @@ type SetStateInternal<T> = {
       | T
       | Partial<T>
       | {
-          _(state: T): T | Partial<T>;
-        }['_'],
+        _(state: T): T | Partial<T>
+      }['_'],
     replace?: boolean | undefined
-  ): void;
-}['_'];
+  ): void
+}['_']
 ```
 
 ## Hook 使用
@@ -110,7 +110,11 @@ export const useStore = create<BearState>()(
 ```
 
 ```tsx
-<button onClick={() => store.increaseCount(2)}>count is {store.count}</button>
+<button onClick={() => store.increaseCount(2)}>
+  count is
+  {' '}
+  {store.count}
+</button>
 ```
 
 ## 3.2 异步 action
@@ -275,44 +279,45 @@ export * from './selectors'
 ## 1. 创建 store
 
 ```ts
-import { createStore } from 'zustand';
-import { createContext } from 'react';
-import { initialState } from '../initialState';
-import { Store } from '../createStore';
+import { createStore } from 'zustand'
+import { createContext } from 'react'
+import { initialState } from '../initialState'
+import { Store } from '../createStore'
 
-export const createBearStore = () =>
-  createStore<Store>((set, get) => ({
+export function createBearStore() {
+  return createStore<Store>((set, get) => ({
     ...initialState,
     increaseCount: (count: number) => {
       set((state) => {
         return {
           count: state.count + count
-        };
-      });
+        }
+      })
     },
     asyncIncreaseCount: async (count: number) => {
       setTimeout(() => {
         set((state) => {
           return {
             count: state.count + count
-          };
-        });
-      }, 2000);
+          }
+        })
+      }, 2000)
     },
     getNearFive: () => {
-      const count = get().count;
-      const value =
-        count % 5 < 3 ? count - (count % 5) : count + 5 - (count % 5);
-      set({ count: value });
+      const count = get().count
+      const value
+        = count % 5 < 3 ? count - (count % 5) : count + 5 - (count % 5)
+      set({ count: value })
     }
-  }));
+  }))
+}
 ```
 
 ## 2. 定义 Context
 
 ```tsx
-type BearStore = ReturnType<typeof createBearStore>;
-export const BearContext = createContext<BearStore | null>(null);
+type BearStore = ReturnType<typeof createBearStore>
+export const BearContext = createContext<BearStore | null>(null)
 ```
 
 ## 3. 使用
@@ -320,20 +325,20 @@ export const BearContext = createContext<BearStore | null>(null);
 在根组件上
 
 ```tsx
-import React, { useRef, useContext } from 'react';
-import { useStore } from 'zustand';
-import './App.css';
-import Header from './component/Header';
-import Footer from './component/Footer';
-import Container from './component/Container';
-import { BearContext, createBearStore } from './store/context/react_context';
+import React, { useContext, useRef } from 'react'
+import { useStore } from 'zustand'
+import './App.css'
+import Header from './component/Header'
+import Footer from './component/Footer'
+import Container from './component/Container'
+import { BearContext, createBearStore } from './store/context/react_context'
 
 function App() {
-  const store = useRef(createBearStore()).current;
+  const store = useRef(createBearStore()).current
   return (
     <div>
       <BearContext.Provider value={store}>
-        <div className='card'>
+        <div className="card">
           <Header />
           <Container />
           <Footer />
@@ -346,13 +351,11 @@ function App() {
 å
 const Other: React.FC = () => {
   try {
-    const store = useContext(BearContext);
-    if (!store) throw new Error('Missing BearContext.Provider in the tree');
-    const bears = useStore(store, (s) => s.name);
-    return <div>{bears ?? ''}</div>;
-  } catch (error) {
-    // 会报错
-    return <div>error</div>;
+    const store = useContext(BearContext)
+    if (!store)
+      throw new Error('Missing BearContext.Provider in the tree')
+    const bears = useStore(store, s => s.name)
+    return <div>{bears ?? ''}</div>
   }
   catch (error) {
     // 会报错
@@ -364,18 +367,19 @@ const Other: React.FC = () => {
 其他组件上读取使用
 
 ```tsx
-import React, { useRef, PropsWithChildren, useContext } from 'react';
-import { createBearStore, BearContext, BearStore } from './react_context';
-import { useStore } from 'zustand';
+import React, { PropsWithChildren, useContext, useRef } from 'react'
+import { useStore } from 'zustand'
+import { BearContext, BearStore, createBearStore } from './react_context'
 
-export const Consumer = () => {
-  const storeApi = useContext(BearContext);
-  if (!storeApi) throw new Error('Missing TestContext.Provider in the tree');
-  const setKey = useStore(storeApi, (state) => state.increaseCount);
-  const key = useStore(storeApi, (state) => state.count);
+export function Consumer() {
+  const storeApi = useContext(BearContext)
+  if (!storeApi)
+    throw new Error('Missing TestContext.Provider in the tree')
+  const setKey = useStore(storeApi, state => state.increaseCount)
+  const key = useStore(storeApi, state => state.count)
   return (
     <div>
-      <button type='button' onClick={() => setKey(1)}>
+      <button type="button" onClick={() => setKey(1)}>
         Set Key
       </button>
       <div>
@@ -411,9 +415,10 @@ export function useBearInContext<T>(
   selector: (state: Store) => T,
   equalityFn?: (left: T, right: T) => boolean
 ): T {
-  const store = useContext(BearContext);
-  if (!store) throw new Error('Missing BearContext.Provider in the tree');
-  return useStore(store, selector, equalityFn);
+  const store = useContext(BearContext)
+  if (!store)
+    throw new Error('Missing BearContext.Provider in the tree')
+  return useStore(store, selector, equalityFn)
 }
 ```
 
