@@ -28,7 +28,9 @@
       "@store/*": ["src/store/*"],
       "@store": ["src/store"]
     },
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "sourceMap": true,
+    "outDir": "out"
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
